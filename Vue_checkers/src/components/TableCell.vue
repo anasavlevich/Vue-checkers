@@ -4,7 +4,7 @@
             'table-cell__figure--white': figureType === 1,
             'table-cell__figure--black': figureType === 2,
             'table-cell__figure--active': isActive
-        }" @click.stop="findWays" />
+        }" @click.stop="FindWays" />
     </div>
 </template>
 
@@ -12,9 +12,7 @@
 import { ref, reactive, computed } from "vue";
 import { storeToRefs } from "pinia";
 import { useMainStore } from "@/store";
-import { useOnTable } from "@/composables/useOnTable";
-import { useCanMove } from "@/composables/useCanMove";
-import { useMoveCalculate } from "@/composables/useMoveCalculate";
+import { useFindWays } from "@/composables/useFindWays";
 
 
 const emit = defineEmits(["showWay", "moveChecker"]);
@@ -40,35 +38,8 @@ const isActive = computed(
         currentChecker.value.cx === current.cx &&
         currentChecker.value.cy === current.cy
 );
-
-function MoveCalculate() {
-    useMoveCalculate( ways, figureType )
-}
-function findWays() {
-    let ways = [
-        {
-            position: "topLeft",
-            cx: cx.value - 1,
-            cy: cy.value - 1,
-        },
-        {
-            position: "topRight",
-            cx: cx.value + 1,
-            cy: cy.value - 1,
-        },
-        {
-            position: "bottomLeft",
-            cx: cx.value - 1,
-            cy: cy.value + 1,
-        },
-        {
-            position: "bottomRight",
-            cx: cx.value + 1,
-            cy: cy.value + 1,
-        },
-    ].filter((item) => useOnTable(item));
-    ways = MoveCalculate(ways).filter((item) => useCanMove(item));
-    emit("showWay", { ways, current });
+function FindWays() {
+    useFindWays(emit, cx, cy, figureType, current)
 }
 function moveChecker() {
     emit("moveChecker", current);
